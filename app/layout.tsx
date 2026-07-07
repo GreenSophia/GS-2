@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Green Sophia — SNS Copilot',
-  description: 'Learn with us, act with Green Sophia, inspire others.',
+  description: 'Green Sophia の発信活動を支える運用拠点',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -12,9 +12,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <header className="site-header">
           <div className="inner">
-            <a href="/" className="brand">
+            <a href="/" className="brand" style={{ textDecoration: 'none' }}>
               <span className="logo-script">Green Sophia</span>
-              <span className="kicker">SNS Desk</span>
+              <span className="kicker">SNS Copilot</span>
             </a>
             <nav className="nav" aria-label="メイン">
               <a href="/stocks">ためる</a>
