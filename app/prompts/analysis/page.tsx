@@ -44,7 +44,7 @@ export default function AnalysisPromptPage() {
       <h1>🔍 ふりかえりプロンプトメーカー</h1>
       <p className="muted">
         Instagramのインサイト画面の数字をここに写すだけ。Claudeが分析と来月の作戦を返してくれる指示文をつくります。
-        数字は<a href="/metrics">「ひろげる」</a>にも記録しておくとメディアキットに使えるよ。
+        数字は<a href="/metrics">「PR」</a>にも記録しておくとメディアキットに使えるよ。
       </p>
 
       <div className="card">
@@ -99,7 +99,7 @@ export default function AnalysisPromptPage() {
         </div>
         <div className="prompt-out">{prompt}</div>
       </div>
-      {copied && <div className="toast">クリップボードにコピーしました 🌿</div>}
+      {copied && <div className="toast">クリップボードにコピー完了</div>}
     </main>
   );
 }
