@@ -16,16 +16,28 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <span className="logo-script">Green Sophia</span>
               <span className="kicker">SNS Copilot</span>
             </a>
-            <nav className="nav" aria-label="メイン">
-              <a href="/stocks">記録</a>
-              <a href="/prompts/post">作成</a>
-              <a href="/prompts/analysis">過去データ</a>
-              <a href="/portal">Canva</a>
-              <a href="/metrics">実績</a>
-            </nav>
+            {/* PC幅ではヘッダー内にも簡易ナビを出す */}
+            <nav className="nav" aria-label="メイン" style={{ display: 'none' }} />
           </div>
         </header>
+
         {children}
+
+        {/* スマホ用：画面下固定タブ */}
+        <nav className="tabbar" aria-label="メインメニュー">
+          <a href="/stocks">
+            <span className="icon">🗂</span>
+            記録
+          </a>
+          <a href="/prompts/post">
+            <span className="icon">✎</span>
+            作成
+          </a>
+          <a href="/metrics">
+            <span className="icon">📊</span>
+            実績
+          </a>
+        </nav>
       </body>
     </html>
   );
