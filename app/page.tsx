@@ -25,7 +25,7 @@ export default async function Home() {
           inspire others.
         </h1>
         <p className="lede">
-          Learn with us, act with Green Sophia, inspire others.
+          
           共に学び、共に行動することで、誰かを刺激する。
           
         </p>
@@ -47,7 +47,7 @@ export default async function Home() {
             <div className="eyebrow">02　ACT</div>
             <h2>制作</h2>
             <p className="muted" style={{ marginTop: 10 }}>
-              条件を選び、Claudeに渡す投稿プロンプトを作成。
+            条件を選ぶだけで、投稿文・画像・Canvaテンプレをまとめて用意。
             </p>
           </div>
         </a>
@@ -56,7 +56,7 @@ export default async function Home() {
             <div className="eyebrow">03　INSPIRE</div>
             <h2>PR</h2>
             <p className="muted" style={{ marginTop: 10 }}>
-              月次実績を記録し、企業提案用の資料として出力。
+              月次実績を記録し、分析や資料出力までをまとめて行う。
             </p>
           </div>
         </a>
