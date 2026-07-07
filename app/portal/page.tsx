@@ -40,12 +40,12 @@ export default async function PortalPage() {
       <span className="eyebrow">Our design shelf</span>
       <h1>🎨 Canva棚</h1>
       <p className="muted">
-        <a href="/prompts/post">つくる</a>でできた原稿を、ここのテンプレに流し込んで完成させよう。
+        <a href="/prompts/post">つくる</a>でできた原稿を、ここのテンプレに流し込んで完成させる。
       </p>
 
       {!grouped.length ? (
         <div className="empty">
-          まだテンプレが登録されてないよ。下のフォームから、サークルのCanvaテンプレURLを追加してね 🎨
+          まだテンプレが登録されていません。下のフォームから、サークルのCanvaテンプレURLを追加してください。
         </div>
       ) : (
         grouped.map((g) => (
