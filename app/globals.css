@@ -1,198 +1,219 @@
-@import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&family=Caveat:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap');
 
-/* ==========================================================
-   Green Sophia デザイントークン
-   ロゴの手書きスクリプト / 水彩パステルの投稿 / 丸くやわらかい世界観
-   ========================================================== */
 :root {
-  --leaf:   #5FB57E;   /* ロゴのグリーン */
-  --leaf-d: #3E8F60;   /* 濃いめの葉 */
-  --deep:   #29513F;   /* 見出しのパイングリーン（Wixサイトの活動理念と同系） */
-  --ink:    #37453D;   /* 本文 */
-  --cream:  #FAF7EF;   /* 紙のようなオフホワイト背景 */
-  --sprout: #EAF4EC;   /* 若葉のサーフェス */
-  --sky:    #CBE3ED;   /* 海洋プラ投稿のパステルブルー */
-  --peach:  #F6D3C4;   /* 環境×アート投稿のピーチ */
-  --sun:    #F5E7BC;   /* 砂浜・ひまわりのイエロー */
-  --line:   #DCE7DD;   /* 罫線 */
-
-  --r-lg: 24px;
-  --r-md: 16px;
-  --r-sm: 10px;
-  --shadow: 0 6px 24px rgba(41, 81, 63, 0.08);
+  --ink:    #17201A;
+  --ink-2:  #43504A;
+  --moss:   #4A6B4E;
+  --moss-d: #33503A;
+  --paper:  #F4F1E9;
+  --panel:  #FBFAF5;
+  --rule:   #CFC8B6;
+  --rule-2: #E4DECF;
+  --muted:  #7C7768;
+  --flag:   #B5482E;
 }
 
 * { box-sizing: border-box; }
 
 html, body {
-  margin: 0;
-  padding: 0;
-  background: var(--cream);
+  margin: 0; padding: 0;
+  background: var(--paper);
   color: var(--ink);
-  font-family: 'Zen Maru Gothic', system-ui, sans-serif;
-  line-height: 1.75;
+  font-family: 'Zen Kaku Gothic New', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.8;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* 背景にうっすら水彩のにじみ */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background:
-    radial-gradient(560px 380px at 8% -4%,  rgba(95,181,126,.10), transparent 68%),
-    radial-gradient(480px 360px at 96% 12%, rgba(203,227,237,.35), transparent 70%),
-    radial-gradient(520px 420px at 82% 96%, rgba(246,211,196,.28), transparent 70%);
+::selection { background: var(--moss); color: #fff; }
+
+a { color: var(--moss-d); text-decoration: none; border-bottom: 1px solid var(--rule); }
+a:hover { border-color: var(--moss); }
+
+h1, h2, h3 { margin: 0; font-weight: 400; letter-spacing: .01em; }
+h1 {
+  font-family: 'Instrument Serif', 'Noto Serif JP', serif;
+  font-size: clamp(2rem, 5vw, 2.9rem);
+  line-height: 1.12; letter-spacing: 0;
 }
+h2 {
+  font-family: 'Instrument Serif', serif;
+  font-size: 1.55rem; line-height: 1.2;
+}
+h3 { font-family: 'Zen Kaku Gothic New'; font-size: .98rem; font-weight: 700; }
 
-a { color: var(--leaf-d); text-decoration: none; }
-a:hover { text-decoration: underline; }
+.serif-it { font-family: 'Instrument Serif', serif; font-style: italic; }
 
-h1, h2, h3 { color: var(--deep); font-weight: 900; line-height: 1.4; margin: 0 0 .4em; }
-h1 { font-size: 1.6rem; letter-spacing: .06em; }
-h2 { font-size: 1.2rem; }
-h3 { font-size: 1.02rem; }
-
-/* 英字スクリプトの「まくら言葉」— ロゴの筆記体の echo */
 .eyebrow {
-  font-family: 'Caveat', cursive;
-  font-size: 1.5rem;
-  color: var(--leaf);
-  display: block;
-  line-height: 1;
-  margin-bottom: 2px;
+  font-family: 'Space Mono', monospace;
+  font-size: .7rem; font-weight: 700;
+  letter-spacing: .22em; text-transform: uppercase;
+  color: var(--moss);
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 14px;
+}
+.eyebrow::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
+
+.mono { font-family: 'Space Mono', monospace; }
+.muted { color: var(--muted); }
+
+.container {
+  max-width: 940px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px) 100px;
+  position: relative;
+}
+.container::before, .container::after {
+  content: ''; position: fixed; top: 0; bottom: 0; width: 1px;
+  background: var(--rule-2); z-index: 0;
+}
+@media (min-width: 1040px) {
+  .container::before { left: calc(50% - 470px - 28px); }
+  .container::after  { right: calc(50% - 470px - 28px); }
 }
 
-.container { max-width: 880px; margin: 0 auto; padding: 20px 18px 90px; }
-
-/* ---------- ヘッダー ---------- */
 .site-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 18px;
-  position: sticky; top: 0; z-index: 20;
-  background: rgba(250, 247, 239, .88);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--line);
+  position: sticky; top: 0; z-index: 30;
+  background: var(--paper);
+  border-bottom: 1.5px solid var(--ink);
 }
-.brand { display: flex; align-items: center; gap: 10px; color: var(--deep); font-weight: 900; }
-.brand .logo-script { font-family: 'Caveat', cursive; font-size: 1.5rem; color: var(--leaf-d); font-weight: 700; }
-.nav { display: flex; gap: 4px; flex-wrap: wrap; }
+.site-header .inner {
+  max-width: 940px; margin: 0 auto;
+  padding: 14px clamp(16px, 4vw, 40px);
+  display: flex; align-items: baseline; justify-content: space-between; gap: 20px;
+}
+.brand { display: flex; align-items: baseline; gap: 10px; border: none; }
+.brand .logo-script {
+  font-family: 'Instrument Serif', serif; font-size: 1.5rem; color: var(--ink);
+  letter-spacing: 0;
+}
+.brand .kicker {
+  font-family: 'Space Mono', monospace; font-size: .62rem; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--muted);
+}
+.nav { display: flex; gap: 0; flex-wrap: wrap; }
 .nav a {
-  padding: 7px 13px; border-radius: 999px; font-size: .88rem; font-weight: 700;
-  color: var(--deep);
+  font-family: 'Space Mono', monospace;
+  font-size: .72rem; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink-2); border: none; padding: 4px 14px;
+  border-left: 1px solid var(--rule);
 }
-.nav a:hover { background: var(--sprout); text-decoration: none; }
-.nav a.active { background: var(--leaf); color: #fff; }
+.nav a:first-child { border-left: none; }
+.nav a:hover { color: var(--moss); background: var(--rule-2); }
 
-/* ---------- カード ---------- */
+.masthead { padding: 46px 0 22px; border-bottom: 1.5px solid var(--ink); position: relative; z-index: 1; }
+.masthead .lede { max-width: 62ch; color: var(--ink-2); margin-top: 14px; font-size: 1.02rem; }
+
 .card {
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: var(--r-lg);
-  padding: 20px;
-  box-shadow: var(--shadow);
-  margin-bottom: 18px;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  padding: 24px 26px;
+  margin: 22px 0;
+  position: relative; z-index: 1;
 }
-.card.tint-green { background: var(--sprout); }
-.card.tint-sky   { background: linear-gradient(160deg, #fff 30%, var(--sky)); }
-.card.tint-peach { background: linear-gradient(160deg, #fff 30%, var(--peach)); }
+.card.tint-green, .card.tint-sky, .card.tint-peach { background: var(--panel); }
 
-.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+.card-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--ink); margin: 26px 0; position: relative; z-index: 1;
+}
+.card-grid > a { border: none; }
+.card-grid > a + a > .card { border-left: 1px solid var(--rule); }
+.card-grid .card { margin: 0; border: none; background: var(--panel); height: 100%; transition: background .12s; }
+.card-grid > a:hover .card { background: #fff; }
+@media (max-width: 680px) {
+  .card-grid { grid-template-columns: 1fr; }
+  .card-grid > a + a > .card { border-left: none; border-top: 1px solid var(--rule); }
+}
 
-/* ---------- ボタン ---------- */
 .btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  border: none; cursor: pointer;
-  font-family: inherit; font-weight: 700; font-size: .95rem;
-  padding: 11px 20px; border-radius: 999px;
-  background: var(--sprout); color: var(--deep);
-  transition: transform .12s ease, box-shadow .12s ease;
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'Space Mono', monospace; font-size: .78rem; letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 10px 18px; cursor: pointer;
+  background: transparent; color: var(--ink);
+  border: 1px solid var(--ink); border-radius: 0;
+  transition: background .12s, color .12s;
 }
-.btn:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(41,81,63,.14); }
-.btn:active { transform: translateY(0); }
-.btn-primary { background: var(--leaf); color: #fff; }
-.btn-ghost { background: transparent; border: 1.5px dashed var(--leaf); }
-.btn-sm { padding: 6px 14px; font-size: .84rem; }
-.btn:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
+.btn:hover { background: var(--ink); color: var(--paper); }
+.btn-primary { background: var(--moss); border-color: var(--moss); color: #fff; }
+.btn-primary:hover { background: var(--moss-d); border-color: var(--moss-d); color: #fff; }
+.btn-sm { padding: 6px 12px; font-size: .7rem; }
+.btn:focus-visible { outline: 2px solid var(--moss); outline-offset: 2px; }
 
-/* ---------- フォーム ---------- */
-.field { margin-bottom: 14px; }
-.field label { display: block; font-weight: 700; font-size: .9rem; color: var(--deep); margin-bottom: 4px; }
-.field .hint { font-size: .78rem; color: #7d8b82; font-weight: 400; margin-left: 6px; }
+.field { margin-bottom: 18px; }
+.field label {
+  display: block; font-size: .82rem; font-weight: 700; color: var(--ink); margin-bottom: 6px;
+}
+.field .hint { font-family: 'Space Mono', monospace; font-size: .68rem; color: var(--muted); font-weight: 400; margin-left: 8px; letter-spacing: .02em; }
 input[type="text"], input[type="number"], input[type="month"], input[type="url"],
 input[type="password"], select, textarea {
-  width: 100%;
-  font-family: inherit; font-size: .95rem;
-  padding: 10px 14px;
-  border: 1.5px solid var(--line);
-  border-radius: var(--r-md);
-  background: #fff;
-  color: var(--ink);
+  width: 100%; font-family: inherit; font-size: .92rem;
+  padding: 10px 12px; color: var(--ink);
+  background: #fff; border: 1px solid var(--rule); border-radius: 0;
 }
-textarea { min-height: 90px; resize: vertical; }
+textarea { min-height: 92px; resize: vertical; line-height: 1.7; }
 input:focus, select:focus, textarea:focus {
-  outline: none; border-color: var(--leaf);
-  box-shadow: 0 0 0 3px rgba(95,181,126,.18);
+  outline: none; border-color: var(--moss); box-shadow: inset 0 0 0 1px var(--moss);
 }
 
-/* 選べるチップ（ラジオ/チェックの見た目） */
-.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 0; border: 1px solid var(--rule); width: fit-content; max-width: 100%; }
 .chip {
-  padding: 7px 15px; border-radius: 999px; cursor: pointer;
-  border: 1.5px solid var(--line); background: #fff;
-  font-size: .88rem; font-weight: 700; color: var(--ink);
-  user-select: none;
+  padding: 7px 14px; cursor: pointer; background: #fff;
+  border: none; border-right: 1px solid var(--rule);
+  font-size: .82rem; font-weight: 500; color: var(--ink-2); user-select: none;
 }
-.chip.on { background: var(--leaf); border-color: var(--leaf); color: #fff; }
+.chip:last-child { border-right: none; }
+.chip.on { background: var(--moss); color: #fff; }
 
-/* ---------- タグ・バッジ ---------- */
 .tag {
-  display: inline-block; padding: 2px 11px; border-radius: 999px;
-  font-size: .76rem; font-weight: 700;
+  display: inline-block; padding: 2px 8px;
+  font-family: 'Space Mono', monospace; font-size: .64rem; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  border: 1px solid var(--ink); color: var(--ink); background: transparent;
 }
-.tag-design  { background: var(--sky);   color: #2d566b; }
-.tag-sponsor { background: var(--sun);   color: #7a651f; }
-.tag-inbox   { background: var(--peach); color: #8a4d33; }
+.tag-design  { border-color: var(--moss); color: var(--moss); }
+.tag-sponsor { border-color: #8A6D2B; color: #8A6D2B; }
+.tag-inbox   { border-color: var(--muted); color: var(--muted); }
 
-/* ---------- プロンプト出力欄 ---------- */
 .prompt-out {
-  background: var(--sprout);
-  border: 1.5px dashed var(--leaf);
-  border-radius: var(--r-md);
-  padding: 16px;
-  font-size: .85rem;
-  white-space: pre-wrap;
-  max-height: 380px;
-  overflow-y: auto;
+  background: #fff; border: 1px solid var(--rule); border-top: 2px solid var(--ink);
+  padding: 18px; font-family: 'Space Mono', monospace; font-size: .8rem; line-height: 1.65;
+  white-space: pre-wrap; max-height: 400px; overflow-y: auto; color: var(--ink);
 }
 
-/* ---------- テーブル ---------- */
 .table { width: 100%; border-collapse: collapse; font-size: .88rem; }
-.table th { text-align: left; color: var(--deep); border-bottom: 2px solid var(--leaf); padding: 8px 10px; }
-.table td { border-bottom: 1px solid var(--line); padding: 9px 10px; }
-
-/* ---------- ストック一覧 ---------- */
-.stock-item { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px dashed var(--line); }
-.stock-item img { width: 92px; height: 92px; object-fit: cover; border-radius: var(--r-md); border: 1px solid var(--line); }
-.stock-meta { font-size: .78rem; color: #7d8b82; }
-
-/* ---------- その他 ---------- */
-.muted { color: #7d8b82; font-size: .86rem; }
-.divider-leaf { text-align: center; color: var(--leaf); margin: 26px 0 18px; letter-spacing: .5em; }
-.toast {
-  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-  background: var(--deep); color: #fff; font-weight: 700;
-  padding: 11px 22px; border-radius: 999px; box-shadow: var(--shadow); z-index: 50;
+.table th {
+  text-align: left; font-family: 'Space Mono', monospace; font-size: .66rem;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 700;
+  border-bottom: 1.5px solid var(--ink); padding: 8px 10px;
 }
+.table td { border-bottom: 1px solid var(--rule-2); padding: 11px 10px; }
+.table tr:hover td { background: var(--rule-2); }
+
+.stock-item { display: flex; gap: 16px; align-items: flex-start; padding: 18px 0; border-bottom: 1px solid var(--rule-2); }
+.stock-item:last-child { border-bottom: none; }
+.stock-item img { width: 84px; height: 84px; object-fit: cover; border: 1px solid var(--rule); }
+.stock-meta { font-family: 'Space Mono', monospace; font-size: .68rem; color: var(--muted); }
+
+.divider-leaf {
+  position: relative; z-index: 1;
+  border-top: 1px solid var(--ink); margin: 40px 0 20px; height: 0;
+}
+.divider-leaf span {
+  position: absolute; top: -.75em; left: 0; background: var(--paper);
+  padding-right: 14px; font-family: 'Space Mono', monospace;
+  font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+}
+
 .empty {
-  text-align: center; padding: 34px 16px; color: #7d8b82;
-  border: 2px dashed var(--line); border-radius: var(--r-lg);
+  padding: 40px 20px; text-align: center; color: var(--muted);
+  border: 1px dashed var(--rule); font-size: .9rem; background: var(--panel);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; animation: none !important; }
+.toast {
+  position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%);
+  background: var(--ink); color: var(--paper);
+  font-family: 'Space Mono', monospace; font-size: .78rem; letter-spacing: .04em;
+  padding: 11px 20px; z-index: 50;
 }
-@media (max-width: 560px) {
-  .site-header { flex-direction: column; gap: 8px; align-items: flex-start; }
-  h1 { font-size: 1.35rem; }
-}
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
