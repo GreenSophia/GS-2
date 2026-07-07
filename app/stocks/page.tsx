@@ -5,9 +5,9 @@ export const dynamic = 'force-dynamic';
 
 const TABS = [
   { key: 'all', label: 'すべて' },
-  { key: 'design', label: '🖼 参考デザイン' },
-  { key: 'sponsor', label: '🤝 スポンサー候補' },
-  { key: 'inbox', label: '💡 ひらめきメモ' },
+  { key: 'design', label: '参考デザイン' },
+  { key: 'sponsor', label: 'スポンサー候補' },
+  { key: 'inbox', label: 'ひらめきメモ' },
 ] as const;
 
 const TAG: Record<string, { cls: string; label: string }> = {
@@ -45,24 +45,31 @@ export default async function StocksPage({
 
   return (
     <main className="container">
-      <span className="eyebrow">Learn with us</span>
-      <h1>🌱 ためる棚</h1>
-      <p className="muted">
-        サークルのLINE Botに送ったものが、自動でここに集まります。
-        画像は「参考デザイン」、<b>「スポンサー」と書いてURLを送る</b>と「スポンサー候補」に入るよ。
-      </p>
+      <section className="masthead">
+        <div className="eyebrow">01　LEARN — 記録</div>
+        <h1>記録</h1>
+        <p className="lede">
+          サークルのLINE Botに送った参考スクリーンショットや記事URLが、自動でここに集まります。
+        </p>
+      </section>
 
-      <div className="chips" style={{ marginBottom: 16 }}>
+      <nav className="subnav" aria-label="記録内メニュー">
         {TABS.map((t) => (
-          <a key={t.key} href={`/stocks?tab=${t.key}`} className={`chip ${tab === t.key ? 'on' : ''}`}>
+          <a key={t.key} href={`/stocks?tab=${t.key}`} className={tab === t.key ? 'active' : ''}>
             {t.label}
           </a>
         ))}
+      </nav>
+
+      <div className="card tint-green">
+        <p className="muted" style={{ margin: 0, fontSize: '.86rem' }}>
+          画像は「参考デザイン」に自動分類されます。テキストの先頭に「スポンサー」または「デザイン」と書いてURLを送ると、それぞれの区分に振り分けられます。
+        </p>
       </div>
 
       {!stocks?.length ? (
         <div className="empty">
-          このカテゴリはまだ空っぽ。街で見かけた「いいな」をLINEに送っておこう 📮
+          このカテゴリにはまだ記録がありません。気になったものをLINE Botに送ると、ここに集まります。
         </div>
       ) : (
         <div className="card">
@@ -78,13 +85,13 @@ export default async function StocksPage({
                 )}
                 <div style={{ flex: 1 }}>
                   <span className={`tag ${t.cls}`}>{t.label}</span>
-                  {s.note && <p style={{ margin: '4px 0' }}>{s.note}</p>}
+                  {s.note && <p style={{ margin: '8px 0 4px' }}>{s.note}</p>}
                   {s.url && (
                     <a href={s.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: '.86rem', wordBreak: 'break-all' }}>
-                      {s.url} ↗
+                      {s.url}
                     </a>
                   )}
-                  <div className="stock-meta" style={{ marginTop: 4 }}>
+                  <div className="stock-meta" style={{ marginTop: 6 }}>
                     {s.sent_by ? `${s.sent_by} さんから ・ ` : ''}
                     {new Date(s.created_at).toLocaleString('ja-JP', { dateStyle: 'short', timeStyle: 'short' })}
                   </div>
@@ -97,11 +104,11 @@ export default async function StocksPage({
                       <option value="sponsor">スポンサー候補</option>
                       <option value="inbox">ひらめきメモ</option>
                     </select>
-                    <button className="btn btn-sm" type="submit">移動</button>
+                    <button className="btn btn-ghost btn-sm" type="submit">移動</button>
                   </form>
                   <form action={deleteStock}>
                     <input type="hidden" name="id" value={s.id} />
-                    <button className="btn btn-sm" type="submit">削除</button>
+                    <button className="btn btn-ghost btn-sm" type="submit">削除</button>
                   </form>
                 </div>
               </div>
