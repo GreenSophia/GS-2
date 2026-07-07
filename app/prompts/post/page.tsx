@@ -1,157 +1,125 @@
-'use client';
-import { useMemo, useState } from 'react';
-import { buildPostPrompt, buildImagePrompt } from '@/lib/prompts';
+import { db } from '@/lib/db';
+import { revalidatePath } from 'next/cache';
+import PostForm from './post-form';
 
-const TARGETS = ['環境に興味がある大学生', '新入生（入会検討中）', 'サークルをよく知らない一般学生', 'コラボ先の企業・団体', 'すでにフォローしてくれている人'];
-const GOALS = ['イベント参加を増やす', '入会DMにつなげる', '保存されるお役立ち投稿にする', 'フォロワーを増やす', '活動をきちんと報告する'];
-const MOODS = ['水彩・パステル', '手描きイラスト風', '写真そのまま・自然な雰囲気', '図解・インフォグラフィック風', 'ポップでカラフル'];
-const SLIDE_ROLES = ['表紙（1枚目）', '説明・中面', 'まとめ・締め'];
+export const dynamic = 'force-dynamic';
 
-function Chips({ options, value, onChange }: { options: string[]; value: string; onChange: (v: string) => void }) {
-  return (
-    <div className="chips" role="radiogroup">
-      {options.map((o) => (
-        <button
-          key={o}
-          type="button"
-          role="radio"
-          aria-checked={value === o}
-          className={`chip ${value === o ? 'on' : ''}`}
-          onClick={() => onChange(o)}
-        >
-          {o}
-        </button>
-      ))}
-    </div>
-  );
+const CATEGORIES = ['イベント告知', '活動報告', '啓発コラム', 'コラボ', 'その他'] as const;
+
+async function addTemplate(formData: FormData) {
+  'use server';
+  const title = String(formData.get('title') || '').trim();
+  const url = String(formData.get('url') || '').trim();
+  const category = String(formData.get('category') || 'その他');
+  const memo = String(formData.get('memo') || '').trim();
+  if (!title || !url) return;
+  await db().from('canva_templates').insert({ title, url, category, memo: memo || null });
+  revalidatePath('/prompts/post');
 }
 
-export default function PostPromptPage() {
-  const [theme, setTheme] = useState('');
-  const [detail, setDetail] = useState('');
-  const [target, setTarget] = useState(TARGETS[0]);
-  const [goal, setGoal] = useState(GOALS[0]);
-  const [slides, setSlides] = useState(6);
-  const [cta, setCta] = useState('');
-  const [copied, setCopied] = useState('');
+async function deleteTemplate(formData: FormData) {
+  'use server';
+  await db().from('canva_templates').delete().eq('id', String(formData.get('id')));
+  revalidatePath('/prompts/post');
+}
 
-  const [mood, setMood] = useState(MOODS[0]);
-  const [slideRole, setSlideRole] = useState(SLIDE_ROLES[0]);
+export default async function PostPromptPage() {
+  const { data: templates } = await db()
+    .from('canva_templates')
+    .select('*')
+    .order('category')
+    .order('created_at', { ascending: false });
 
-  const prompt = useMemo(
-    () => buildPostPrompt({ theme, detail, target, slides, goal, cta }),
-    [theme, detail, target, slides, goal, cta]
-  );
-
-  const imagePrompt = useMemo(
-    () => buildImagePrompt({ theme, detail, mood, slideRole }),
-    [theme, detail, mood, slideRole]
-  );
-
-  async function copy(text: string, which: string) {
-    await navigator.clipboard.writeText(text);
-    setCopied(which);
-    setTimeout(() => setCopied(''), 1800);
-  }
+  const grouped = CATEGORIES.map((c) => ({
+    category: c,
+    items: (templates ?? []).filter((t) => t.category === c),
+  })).filter((g) => g.items.length > 0);
 
   return (
     <main className="container">
       <section className="masthead">
-        <div className="eyebrow">02　ACT — 投稿</div>
-        <h1>投稿プロンプトメーカー</h1>
+        <div className="eyebrow">02　ACT — 作成</div>
+        <h1>作成</h1>
         <p className="lede">
-          条件を入力するだけで、Claudeに渡す文章用プロンプトと、ChatGPT / Geminiに渡す画像生成用プロンプトの両方を組み立てます。
-          出力した原稿・画像は<a href="/portal">Canva棚</a>のテンプレートに流し込みます。
+          条件を入力してプロンプトを組み立て、Claude / ChatGPT・Geminiで原稿と画像を作り、
+          下のCanvaテンプレートに流し込んで投稿を仕上げます。
         </p>
       </section>
 
-      <div className="card">
-        <div className="field">
-          <label>1. なにについての投稿？ <span className="hint">自由に入力してください</span></label>
-          <input
-            type="text"
-            value={theme}
-            onChange={(e) => setTheme(e.target.value)}
-            placeholder="例: 鵠沼海岸でのビーチクリーン / 廃コスメを使った環境アート など"
-          />
+      <nav className="subnav" aria-label="作成内メニュー">
+        <a href="#prompt" className="active">プロンプト作成</a>
+        <a href="#canva">Canva棚</a>
+      </nav>
+
+      <div id="prompt">
+        <PostForm />
+      </div>
+
+      <div className="divider-leaf" id="canva"><span>Canva棚</span></div>
+
+      <div className="card tint-green">
+        <h3 style={{ marginBottom: 12 }}>使い方</h3>
+        <ol style={{ margin: 0, paddingLeft: 22, lineHeight: 2 }}>
+          <li>普段サークルで使っているCanvaのテンプレートを、下のフォームから登録しておきます(最初に一度だけ)。</li>
+          <li>投稿を作るときは、テンプレート名をクリックするとそのCanvaが開きます。</li>
+          <li>上で作った文章・画像をCanvaに流し込み、写真を差し替えれば投稿が完成します。</li>
+        </ol>
+      </div>
+
+      {!grouped.length ? (
+        <div className="empty">
+          まだテンプレートが登録されていません。下のフォームから、サークルのCanvaテンプレートを追加してください。
         </div>
-        <div className="field">
-          <label>
-            2. くわしい内容 <span className="hint">日時・場所・伝えたいことなど。空欄でもOK</span>
-          </label>
-          <textarea
-            value={detail}
-            onChange={(e) => setDetail(e.target.value)}
-            placeholder="例: 7/11(土) 16-19時 鵠沼海岸でビーチクリーン。スイカ割りとアクセサリーWSも。持ち物は軍手。"
-          />
-        </div>
-        <div className="field">
-          <label>3. だれに届けたい？</label>
-          <Chips options={TARGETS} value={target} onChange={setTarget} />
-        </div>
-        <div className="field">
-          <label>4. この投稿のゴールは？</label>
-          <Chips options={GOALS} value={goal} onChange={setGoal} />
-        </div>
-        <div className="field" style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-          <div style={{ flex: '0 0 150px' }}>
-            <label>5. 画像の枚数</label>
-            <input
-              type="number"
-              min={1}
-              max={10}
-              value={slides}
-              onChange={(e) => setSlides(Number(e.target.value))}
-            />
+      ) : (
+        grouped.map((g) => (
+          <div className="card" key={g.category}>
+            <h2>{g.category}</h2>
+            {g.items.map((t) => (
+              <div className="stock-item" key={t.id}>
+                <div style={{ flex: 1 }}>
+                  <a href={t.url} target="_blank" rel="noopener noreferrer" style={{ fontWeight: 700 }}>
+                    {t.title}
+                  </a>
+                  {t.memo && <p className="muted" style={{ margin: '4px 0 0' }}>{t.memo}</p>}
+                </div>
+                <form action={deleteTemplate}>
+                  <input type="hidden" name="id" value={t.id} />
+                  <button className="btn btn-ghost btn-sm" type="submit">削除</button>
+                </form>
+              </div>
+            ))}
           </div>
-          <div style={{ flex: 1, minWidth: 220 }}>
-            <label>
-              6. 読者にしてほしい行動 <span className="hint">空欄なら定番CTAに</span>
-            </label>
-            <input
-              type="text"
-              value={cta}
-              onChange={(e) => setCta(e.target.value)}
-              placeholder="例: ストーリーズのリンクから参加申込"
-            />
+        ))
+      )}
+
+      <div className="card tint-green">
+        <h2>テンプレートを追加する</h2>
+        <form action={addTemplate}>
+          <div className="field">
+            <label>名前</label>
+            <input type="text" name="title" placeholder="例: ビーチクリーン告知（水彩ブルー）" required />
           </div>
-        </div>
+          <div className="field" style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+            <div style={{ flex: 2, minWidth: 220 }}>
+              <label>CanvaのURL</label>
+              <input type="url" name="url" placeholder="https://www.canva.com/design/..." required />
+            </div>
+            <div style={{ flex: 1, minWidth: 150 }}>
+              <label>カテゴリ</label>
+              <select name="category">
+                {CATEGORIES.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div className="field">
+            <label>メモ <span className="hint">省略可</span></label>
+            <input type="text" name="memo" placeholder="例: カルーセル6枚用。表紙の写真は差し替えて使う" />
+          </div>
+          <button className="btn btn-primary" type="submit">棚に追加する</button>
+        </form>
       </div>
-
-      <div className="card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-          <h2 style={{ margin: 0 }}>文章用プロンプト</h2>
-          <button className="btn btn-primary btn-sm" onClick={() => copy(prompt, 'text')}>
-            {copied === 'text' ? 'コピー完了' : 'Claudeへコピー'}
-          </button>
-        </div>
-        <div className="prompt-out">{prompt}</div>
-      </div>
-
-      <div className="divider-leaf"><span>画像生成プロンプト</span></div>
-
-      <div className="card">
-        <p className="muted" style={{ marginTop: 0 }}>
-          下の指示文をコピーして、ChatGPT・Gemini・Canvaの画像生成機能などに貼り付けると、投稿用の画像を作成できます。
-        </p>
-        <div className="field">
-          <label>雰囲気</label>
-          <Chips options={MOODS} value={mood} onChange={setMood} />
-        </div>
-        <div className="field">
-          <label>どのスライド用？</label>
-          <Chips options={SLIDE_ROLES} value={slideRole} onChange={setSlideRole} />
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-          <h3 style={{ margin: 0 }}>できあがった画像生成プロンプト</h3>
-          <button className="btn btn-primary btn-sm" onClick={() => copy(imagePrompt, 'image')}>
-            {copied === 'image' ? 'コピー完了' : 'ChatGPT/Geminiへコピー'}
-          </button>
-        </div>
-        <div className="prompt-out">{imagePrompt}</div>
-      </div>
-
-      {copied && <div className="toast">クリップボードにコピーしました</div>}
     </main>
   );
 }
