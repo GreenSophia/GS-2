@@ -25,8 +25,9 @@ export default async function Home() {
           inspire others.
         </h1>
         <p className="lede">
+          Learn with us, act with Green Sophia, inspire others.
           共に学び、共に行動することで、誰かを刺激する。
-          その理念を、日々の発信活動へと形にするための運用拠点です。
+          
         </p>
       </section>
 
@@ -34,9 +35,9 @@ export default async function Home() {
         <a href="/stocks">
           <div className="card">
             <div className="eyebrow">01　LEARN</div>
-            <h2>ためる</h2>
+            <h2>保存リスト</h2>
             <p className="muted" style={{ marginTop: 10 }}>
-              LINEに送った参考スクリーンショットや記事を蓄積します。
+              LINEに送った参考スクリーンショットや記事を蓄積する。
               <br /><span style={{ fontSize: '.82rem' }}>現在 {stockCount ?? 0} 件</span>
             </p>
           </div>
@@ -44,18 +45,18 @@ export default async function Home() {
         <a href="/prompts/post">
           <div className="card">
             <div className="eyebrow">02　ACT</div>
-            <h2>つくる</h2>
+            <h2>制作</h2>
             <p className="muted" style={{ marginTop: 10 }}>
-              条件を選ぶだけで、Claudeに渡す投稿プロンプトを組み立てます。
+              条件を選び、Claudeに渡す投稿プロンプトを作成。
             </p>
           </div>
         </a>
         <a href="/metrics">
           <div className="card">
             <div className="eyebrow">03　INSPIRE</div>
-            <h2>ひろげる</h2>
+            <h2>PR</h2>
             <p className="muted" style={{ marginTop: 10 }}>
-              月次実績を記録し、企業提案用の資料として出力します。
+              月次実績を記録し、企業提案用の資料として出力。
             </p>
           </div>
         </a>
