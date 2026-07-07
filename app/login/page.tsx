@@ -18,33 +18,35 @@ export default function LoginPage() {
     if (res.ok) {
       window.location.href = '/';
     } else {
-      setError('あいことばが違うみたい。もう一度確認してね');
+      setError('パスワードが一致しません。');
       setBusy(false);
     }
   }
 
   return (
-    <div className="container" style={{ maxWidth: 420, paddingTop: '12vh' }}>
-      <div className="card" style={{ textAlign: 'center' }}>
-        <span className="eyebrow">Welcome back!</span>
-        <h1>Green Sophia<br />SNS Copilot</h1>
-        <p className="muted">部員共通の「あいことば」を入れてね 🌿</p>
-        <div className="field" style={{ textAlign: 'left' }}>
+    <div className="container" style={{ maxWidth: 440, paddingTop: '14vh' }}>
+      <div className="card" style={{ borderTop: '3px solid var(--sophia)' }}>
+        <div className="eyebrow">MEMBERS ONLY</div>
+        <h1 style={{ fontSize: '2rem', lineHeight: 1.3 }}>Green Sophia<br />SNS Copilot</h1>
+        <p className="muted" style={{ marginTop: 14 }}>
+          パスワードを入力してください。
+        </p>
+        <div className="field" style={{ marginTop: 24 }}>
           <input
             type="password"
-            placeholder="あいことば"
+            placeholder="パスワード"
             value={passcode}
             onChange={(e) => setPasscode(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && submit()}
             autoFocus
           />
         </div>
-        {error && <p style={{ color: '#c0563a', fontSize: '.86rem' }}>{error}</p>}
+        {error && <p style={{ color: '#B5482E', fontSize: '.86rem', margin: '0 0 12px' }}>{error}</p>}
         <button className="btn btn-primary" style={{ width: '100%' }} onClick={submit} disabled={busy}>
-          {busy ? 'ひらいています…' : 'ひらく'}
+          {busy ? '確認しています' : '入室する'}
         </button>
-        <p className="muted" style={{ marginTop: 14, fontSize: '.78rem' }}>
-          あいことばが分からないときは代表かSNS班に聞いてね
+        <p className="muted" style={{ marginTop: 18, fontSize: '.8rem' }}>
+          パスワードが分からない場合は、情報班に確認してください。
         </p>
       </div>
     </div>
