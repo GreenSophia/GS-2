@@ -136,3 +136,32 @@ ${lines.join('\n')}
 
 ※本データはInstagramインサイトに基づく自社集計です。`;
 }
+// ---------- 画像生成プロンプト（ChatGPT / Gemini 用） ----------
+export type ImagePromptInput = {
+  theme: string;
+  detail: string;
+  mood: string;      // 雰囲気キーワード（水彩風、パステル 等）
+  slideRole: string;  // 表紙 / 中面 / まとめ 等
+};
+
+export function buildImagePrompt(i: ImagePromptInput): string {
+  return `Instagram投稿用の画像を1枚生成してください。
+
+【内容】
+${i.theme}${i.detail ? `（${i.detail}）` : ''}をテーマにした、${i.slideRole || '投稿用'}の画像。
+
+【雰囲気・スタイル】
+${i.mood || 'やわらかい水彩・パステルカラー、手描き風のイラストテイスト'}。
+説教くさくなく、親しみやすい印象。学生サークルらしい温かみのある表現。
+
+【構図・技術指定】
+- 正方形（1:1）またはInstagram縦長（4:5）に収まる構図
+- 文字は入れず、イラスト・写真的な要素のみで構成
+- 背景に強すぎるコントラストを避け、Canva上で文字を後から重ねられる余白を左右または上下に残す
+- 色数は3〜4色程度に抑え、統一感のある配色にする
+
+【避けたいこと】
+- 過度にリアルで生々しい表現
+- 特定の実在ブランドロゴや商標
+- 文字・ロゴ・透かしの生成`;
+}
