@@ -17,9 +17,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <span className="kicker">SNS Copilot</span>
             </a>
             <nav className="nav" aria-label="メイン">
-              <a href="/stocks">ためる</a>
-              <a href="/prompts/post">つくる</a>
-              <a href="/prompts/analysis">ふりかえる</a>
+              <a href="/stocks">記録</a>
+              <a href="/prompts/post">作成</a>
+              <a href="/prompts/analysis">過去データ</a>
               <a href="/portal">Canva</a>
               <a href="/metrics">実績</a>
             </nav>
