@@ -48,9 +48,9 @@ export default async function MetricsPage() {
   return (
     <main className="container">
       <span className="eyebrow">Inspire others</span>
-      <h1>📈 ひろげる（実績ノート）</h1>
+      <h1>📈 PR（実績ノート）</h1>
       <p className="muted">
-        月に一度、インサイトの数字をここに写しておこう。企業コラボの提案時に「メディアキット」として一瞬で出せるようになるよ。
+        月に一度、インサイトの数字をここに写しておく。企業コラボの提案時にメディアキットとして出力。
       </p>
 
       <div className="card tint-peach">
@@ -96,7 +96,7 @@ export default async function MetricsPage() {
       <div className="card">
         <h2>これまでの歩み</h2>
         {!rows?.length ? (
-          <div className="empty">まだ記録がないよ。最初のひと月を書き込もう ✏️</div>
+          <div className="empty">まだ記録がありません。</div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
             <table className="table">
