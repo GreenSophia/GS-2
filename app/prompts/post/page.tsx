@@ -2,6 +2,7 @@ import { db } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 import PostForm from './post-form';
 import CompanyForm from './company-form';
+import AnnouncementForm from './announcement-form';
 
 export const dynamic = 'force-dynamic';
 
@@ -45,12 +46,13 @@ export default async function PostPromptPage() {
         <div className="eyebrow">02　ACT — 作成</div>
         <h1>作成</h1>
         <p className="lede">
-          投稿・画像・Canvaテンプレの作成に加えて、コラボ先企業のリサーチや提案文の下書きもここで作れます。
+          投稿・画像・Canvaテンプレの作成に加えて、イベント告知文やコラボ先企業のリサーチもここで作れます。
         </p>
       </section>
 
       <nav className="subnav" aria-label="作成内メニュー">
         <a href="#prompt" className="active">投稿プロンプト</a>
+        <a href="#announce">告知文</a>
         <a href="#canva">Canva棚</a>
         <a href="#company">企業リサーチ・提案</a>
       </nav>
@@ -58,6 +60,9 @@ export default async function PostPromptPage() {
       <div id="prompt">
         <PostForm recentRefs={recentRefs} />
       </div>
+
+      <div className="divider-leaf" id="announce"><span>活動告知文</span></div>
+      <AnnouncementForm />
 
       <div className="divider-leaf" id="canva"><span>Canva棚</span></div>
 
