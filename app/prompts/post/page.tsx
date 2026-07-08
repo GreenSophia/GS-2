@@ -1,6 +1,7 @@
 import { db } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 import PostForm from './post-form';
+import CompanyForm from './company-form';
 
 export const dynamic = 'force-dynamic';
 
@@ -41,14 +42,14 @@ export default async function PostPromptPage() {
         <div className="eyebrow">02　ACT — 作成</div>
         <h1>作成</h1>
         <p className="lede">
-          条件を入力してプロンプトを組み立て、Claude / ChatGPT・Geminiで原稿と画像を作り、
-          下のCanvaテンプレートに流し込んで投稿を仕上げます。
+          投稿・画像・Canvaテンプレの作成に加えて、コラボ先企業のリサーチや提案文の下書きもここで作れます。
         </p>
       </section>
 
       <nav className="subnav" aria-label="作成内メニュー">
-        <a href="#prompt" className="active">プロンプト作成</a>
+        <a href="#prompt" className="active">投稿プロンプト</a>
         <a href="#canva">Canva棚</a>
+        <a href="#company">企業リサーチ・提案</a>
       </nav>
 
       <div id="prompt">
@@ -120,6 +121,9 @@ export default async function PostPromptPage() {
           <button className="btn btn-primary" type="submit">棚に追加する</button>
         </form>
       </div>
+
+      <div className="divider-leaf" id="company"><span>企業リサーチ・提案</span></div>
+      <CompanyForm />
     </main>
   );
 }
