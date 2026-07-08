@@ -25,16 +25,19 @@ async function deleteTemplate(formData: FormData) {
 }
 
 export default async function PostPromptPage() {
-  const { data: templates } = await db()
-    .from('canva_templates')
-    .select('*')
-    .order('category')
-    .order('created_at', { ascending: false });
+  const [{ data: templates }, { data: recentStocks }] = await Promise.all([
+    db().from('canva_templates').select('*').order('category').order('created_at', { ascending: false }),
+    db().from('stocks').select('note, url, type').eq('type', 'design').order('created_at', { ascending: false }).limit(5),
+  ]);
 
   const grouped = CATEGORIES.map((c) => ({
     category: c,
     items: (templates ?? []).filter((t) => t.category === c),
   })).filter((g) => g.items.length > 0);
+
+  const recentRefs = (recentStocks ?? [])
+    .map((s) => s.note || s.url)
+    .filter((v): v is string => !!v);
 
   return (
     <main className="container">
@@ -53,7 +56,7 @@ export default async function PostPromptPage() {
       </nav>
 
       <div id="prompt">
-        <PostForm />
+        <PostForm recentRefs={recentRefs} />
       </div>
 
       <div className="divider-leaf" id="canva"><span>Canva棚</span></div>
