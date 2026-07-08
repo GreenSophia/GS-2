@@ -356,3 +356,96 @@ ${formatInstruction}
 - 相手企業にとっての具体的なメリット（発信力、若年層へのリーチ、CSR文脈など）を必ず盛り込む
 - 誇張した実績や、確認の取れていない数字は書かない`;
 }
+
+// ---------- 活動告知文（メンバー向け／SNS向け／外部向け） ----------
+export type AnnouncementInput = {
+  eventName: string;
+  datetime: string;
+  place: string;
+  detail: string;
+  bringItems: string;   // 持ち物（メンバー向けに使用）
+  audience: 'member' | 'sns' | 'external' | 'all';
+  externalOrg: string;  // 外部向け：宛先団体名（省略可）
+};
+
+function memberAnnouncement(i: AnnouncementInput): string {
+  return `# 依頼
+これはGreen SophiaのLINEグループに送る、部員向けの活動連絡です。
+簡潔で読み飛ばされない、箇条書き中心の連絡文を作ってください。挨拶は最小限、結論から書いてください。
+
+# イベント情報
+- イベント名: ${i.eventName}
+- 日時: ${i.datetime}
+- 場所: ${i.place}
+- 内容: ${i.detail || '（特記なし）'}
+- 持ち物: ${i.bringItems || '（特になし）'}
+
+# 出力形式
+- 1行目：イベント名と日時が一目でわかるタイトル
+- 箇条書きで「日時・集合場所・持ち物・注意事項」
+- 最後に「参加できる人はスタンプで教えてください」のような一言
+- 絵文字は見出し程度に少量`;
+}
+
+function snsAnnouncement(i: AnnouncementInput): string {
+  return `# 依頼
+これはInstagramに投稿する、イベント直前の告知文です。
+外部の人が読んでも魅力が伝わるよう、期待感を持たせる文章にしてください。堅苦しくならないこと。
+
+# イベント情報
+- イベント名: ${i.eventName}
+- 日時: ${i.datetime}
+- 場所: ${i.place}
+- 内容: ${i.detail || '（特記なし）'}
+
+# 出力形式
+## キャプション（200〜300字、絵文字を交え読みやすく）
+## ストーリーズ用の短文（1〜2行、リンクへの誘導つき）
+## ハッシュタグ（10個程度）`;
+}
+
+function externalAnnouncement(i: AnnouncementInput): string {
+  return `# 依頼
+これは${i.externalOrg ? `${i.externalOrg}様` : '外部の関係者・団体'}に送る、活動案内のメール文面です。
+学生団体らしい丁寧さと熱意を保ちながら、ビジネスメールとして失礼のない文章にしてください。
+
+# イベント情報
+- イベント名: ${i.eventName}
+- 日時: ${i.datetime}
+- 場所: ${i.place}
+- 内容: ${i.detail || '（特記なし）'}
+
+# 出力形式
+件名も含めたメール文面を作成してください。
+- 挨拶
+- 開催概要（日時・場所・内容）
+- 参加や見学を歓迎する旨
+- 問い合わせ先を書く一文（「本メールにご返信ください」等）
+- 結びの挨拶`;
+}
+
+export function buildAnnouncementPrompt(i: AnnouncementInput): string {
+  if (i.audience === 'member') return memberAnnouncement(i);
+  if (i.audience === 'sns') return snsAnnouncement(i);
+  if (i.audience === 'external') return externalAnnouncement(i);
+  // 'all'：3つまとめて1つのプロンプトで依頼する
+  return `以下のイベントについて、3種類の告知文を1度に作成してください。
+
+# イベント情報
+- イベント名: ${i.eventName}
+- 日時: ${i.datetime}
+- 場所: ${i.place}
+- 内容: ${i.detail || '（特記なし）'}
+- 持ち物: ${i.bringItems || '（特になし）'}
+
+---
+
+## ① メンバー向け（LINEグループ連絡）
+簡潔で読み飛ばされない箇条書き中心。結論から。「日時・集合場所・持ち物・注意事項」を箇条書きで。
+
+## ② SNS向け（Instagram告知）
+外部の人が読んでも魅力が伝わる、期待感のある文章。キャプション（200〜300字）＋ストーリーズ用短文＋ハッシュタグ10個。
+
+## ③ 外部向け（案内メール）
+丁寧で失礼のないメール文面。件名つき。開催概要、参加・見学歓迎の旨、問い合わせ先を含める。`;
+}
