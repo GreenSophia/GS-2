@@ -6,6 +6,7 @@ export default function AnalysisForm() {
   const now = new Date();
   const defaultMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
+  const [account, setAccount] = useState<'main' | 'travel'>('main');
   const [month, setMonth] = useState(defaultMonth);
   const [followers, setFollowers] = useState('');
   const [followersDiff, setFollowersDiff] = useState('');
@@ -23,8 +24,8 @@ export default function AnalysisForm() {
   }, [month]);
 
   const prompt = useMemo(
-    () => buildAnalysisPrompt({ month: monthLabel, followers, followersDiff, reach, profileViews, postsCount, bestPost, worstPost, tried }),
-    [monthLabel, followers, followersDiff, reach, profileViews, postsCount, bestPost, worstPost, tried]
+    () => buildAnalysisPrompt({ account, month: monthLabel, followers, followersDiff, reach, profileViews, postsCount, bestPost, worstPost, tried }),
+    [account, monthLabel, followers, followersDiff, reach, profileViews, postsCount, bestPost, worstPost, tried]
   );
 
   async function copy() {
@@ -36,8 +37,20 @@ export default function AnalysisForm() {
   return (
     <>
       <div className="card">
+        <label style={{ display: 'block', fontSize: '.82rem', fontWeight: 700, marginBottom: 8 }}>
+          どちらのアカウント？
+        </label>
+        <div className="chips" style={{ marginBottom: 16 }}>
+          <button type="button" className={`chip ${account === 'main' ? 'on' : ''}`} onClick={() => setAccount('main')}>
+            Green Sophia
+          </button>
+          <button type="button" className={`chip ${account === 'travel' ? 'on' : ''}`} onClick={() => setAccount('travel')}>
+            旅するGreen
+          </button>
+        </div>
+
         <p className="muted" style={{ marginTop: 0 }}>
-          上で記録した数字を写すだけで、Claudeに分析させるためのプロンプトを組み立てます。
+          Instagramインサイトの数字を写すだけで、Claudeに分析させるためのプロンプトを組み立てます。
         </p>
         <div className="field" style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
           <div style={{ flex: '0 0 170px' }}>
