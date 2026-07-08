@@ -3,7 +3,7 @@
 // アプリの心臓部。ここを育てていくと出力の質が上がります。
 // ============================================================
 
-const CIRCLE_CONTEXT = `# あなたの役割
+const CIRCLE_CONTEXT_MAIN = `# あなたの役割
 あなたは上智大学の環境活動サークル「Green Sophia」のSNS担当アシスタントです。
 
 # サークルの基本情報
@@ -12,28 +12,53 @@ const CIRCLE_CONTEXT = `# あなたの役割
 - 姉妹アカウント「旅するGreen」、Podcast「GSラジオ」、オリジナルグッズも展開
 - 主な活動: ビーチクリーン、ごみアートコンテスト、環境×アート（廃コスメでアクセサリー等）、
   企業コラボ（SARAYA等）、学食コラボ販売、農業体験、フェアトレード勉強会
-- 投稿トーン: やわらかいパステル・水彩・手描きテイスト。説教くさくならず、
+- 投稿トーン: やわらかいパステル・水彩・手描きテイスト。説教くさくならず、女子のほうが少し多い。
   「へぇ！」と思える身近な切り口で環境問題への入口をつくる
 - 絵文字は適度に使用（🌏🌿✨など）。堅すぎず、チャラすぎず。`;
 
+const CIRCLE_CONTEXT_TRAVEL = `# あなたの役割
+あなたはGreen Sophiaの姉妹アカウント「旅するGreen」（@tabisurugreen_insta）のSNS担当アシスタントです。
+
+# アカウントの基本情報
+- コンセプト: "クリーンから始まる繋がり"。清掃活動をきっかけに、その土地の文化・歴史・自然・観光・お店・伝統・一次産業などの魅力を体験し発信することで、「歩きたくなる町」を増やしていく
+- 活動範囲: 四ッ谷クリーン（毎月・上智大学のある四ッ谷への感謝を込めて）→ 東京クリーン（都内各地）→ Japan Clean Project（2026年夏以降、日本各地を2〜3ヶ月に1度巡回）
+- 現地で出会った「環境家」（その地域で環境活動をしている人）の思いも伝える
+- パートナー企業・団体と共催イベントを行う「グリーンの輪」という仕組みがある
+- 投稿トーン: Green Sophia本体よりも、個人の旅日記・地域ルポに近い温度感。
+  「この町、歩いてみたくなる」「もう一度訪れたくなる」という読後感を大切にする。
+  清掃活動の様子だけで終わらせず、必ず「その土地の魅力」を伝える視点を入れる。`;
+
 export type PostPromptInput = {
-  theme: string;        // 活動テーマ
-  detail: string;       // イベントの詳細・伝えたいこと
-  target: string;       // ターゲット層
-  slides: number;       // 画像枚数（カルーセル）
-  goal: string;         // 投稿のゴール
-  cta: string;          // 読者にしてほしい行動
+  account: 'main' | 'travel';
+  theme: string;
+  detail: string;
+  target: string;
+  slides: number;
+  goal: string;
+  cta: string;
+  area?: string;    // 旅するGreen専用：訪問地
+  charm?: string;   // 旅するGreen専用：体験した魅力（文化/自然/観光 等）
+  peopleMet?: string; // 旅するGreen専用：出会った人・団体
 };
 
 export function buildPostPrompt(i: PostPromptInput): string {
-  return `${CIRCLE_CONTEXT}
+  const context = i.account === 'travel' ? CIRCLE_CONTEXT_TRAVEL : CIRCLE_CONTEXT_MAIN;
+
+  const travelBlock = i.account === 'travel'
+    ? `- 訪問地: ${i.area || '（未記入）'}
+- 体験した魅力: ${i.charm || '（未記入）'}
+- 現地で出会った人・団体: ${i.peopleMet || '（未記入）'}
+`
+    : '';
+
+  return `${context}
 
 # 今回の依頼
 以下の条件で、Instagramカルーセル投稿の「Canvaに流し込む用の完成原稿」を作ってください。
 
 - 投稿テーマ: ${i.theme}
 - 内容・詳細: ${i.detail || '（特記なし。テーマから自然に展開してください）'}
-- ターゲット: ${i.target}
+${travelBlock}- ターゲット: ${i.target}
 - 画像枚数: ${i.slides}枚
 - この投稿のゴール: ${i.goal}
 - 読者にしてほしい行動(CTA): ${i.cta || 'プロフィールのリンクをチェック / DMで気軽に質問'}
@@ -50,34 +75,18 @@ export function buildPostPrompt(i: PostPromptInput): string {
 - 冒頭1行目はフィードで切れる前提で、続きを読みたくなる一文に
 - 本文は200〜300字、改行と絵文字で読みやすく
 - 最後にCTA
-
+${i.account === 'travel' ? '- 清掃活動の報告だけで終わらせず、必ずその土地の魅力（文化・自然・グルメ等）に触れる一文を入れる\n' : ''}
 ## ハッシュタグ
 3グループに分けて計15個前後:
 - ビッグタグ（#sdgs 等の大規模タグ）
 - ミドルタグ（#ビーチクリーン 等のテーマタグ）
-- 独自・大学タグ（#上智大学 #greensophia 等）
+- 独自・大学タグ（#上智大学 ${i.account === 'travel' ? '#旅するgreen' : '#greensophia'} 等）
 
 # 注意
 - 1枚目は3秒で指を止めさせる。疑問形か意外な数字が有効
 - 専門用語には必ず一言の補足を
 - 誇張やエビデンスのない断定はしない`;
 }
-
-export type AnalysisPromptInput = {
-  month: string;
-  followers: string;
-  followersDiff: string;
-  reach: string;
-  profileViews: string;
-  postsCount: string;
-  bestPost: string;
-  worstPost: string;
-  tried: string;
-};
-
-export function buildAnalysisPrompt(i: AnalysisPromptInput): string {
-  return `${CIRCLE_CONTEXT}
-
 # 今回の依頼
 Instagramの月次インサイトを分析し、来月の運用施策を提案してください。
 
