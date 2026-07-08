@@ -3,6 +3,13 @@
 // アプリの心臓部。ここを育てていくと出力の質が上がります。
 // ============================================================
 
+const VOICE_GUIDE = `# ブランドボイス（誰が書いても口調を揃えるためのルール）
+- 一人称は使わない（「私たち」も基本使わない。主語を立てず、事実と気持ちを短文で並べる）
+- 説教・断定を避ける。「〜すべき」ではなく「〜してみると」「〜だった」という体験ベースの言い方
+- 絵文字は1スライドにつき0〜2個まで。多用しない（🌏🌿✨を中心に、毎回同じものを使い回さない）
+- 数字を出すときは必ず出典か体験に基づくものに絞り、誇張しない
+- 禁止表現：「エモい」「尊い」「ガチで」などの若者言葉の多用、過度な煽り文句（「絶対に」「必見」等）`;
+
 const CIRCLE_CONTEXT_MAIN = `# あなたの役割
 あなたは上智大学の環境活動サークル「Green Sophia」のSNS担当アシスタントです。
 
@@ -12,9 +19,10 @@ const CIRCLE_CONTEXT_MAIN = `# あなたの役割
 - 姉妹アカウント「旅するGreen」、Podcast「GSラジオ」、オリジナルグッズも展開
 - 主な活動: ビーチクリーン、ごみアートコンテスト、環境×アート（廃コスメでアクセサリー等）、
   企業コラボ（SARAYA等）、学食コラボ販売、農業体験、フェアトレード勉強会
-- 投稿トーン: やわらかいパステル・水彩・手描きテイスト。説教くさくならず、女子のほうが少し多い。
+- 投稿トーン: やわらかいパステル・水彩・手描きテイスト。説教くさくならず、
   「へぇ！」と思える身近な切り口で環境問題への入口をつくる
-- 絵文字は適度に使用（🌏🌿✨など）。堅すぎず、チャラすぎず。`;
+
+${VOICE_GUIDE}`;
 
 const CIRCLE_CONTEXT_TRAVEL = `# あなたの役割
 あなたはGreen Sophiaの姉妹アカウント「旅するGreen」（@tabisurugreen_insta）のSNS担当アシスタントです。
@@ -36,10 +44,67 @@ export type PostPromptInput = {
   slides: number;
   goal: string;
   cta: string;
-  area?: string;    // 旅するGreen専用：訪問地
-  charm?: string;   // 旅するGreen専用：体験した魅力（文化/自然/観光 等）
-  peopleMet?: string; // 旅するGreen専用：出会った人・団体
+  area?: string;
+  charm?: string;
+  peopleMet?: string;
+  recentRefs?: string[];   // 「記録」から拾った最近の参考ストック
+  useWebSearch?: boolean;  // Claudeにトレンドを検索させるか
 };
+
+export function buildPostPrompt(i: PostPromptInput): string {
+  const context = i.account === 'travel' ? CIRCLE_CONTEXT_TRAVEL : CIRCLE_CONTEXT_MAIN;
+
+  const travelBlock = i.account === 'travel'
+    ? `- 訪問地: ${i.area || '（未記入）'}
+- 体験した魅力: ${i.charm || '（未記入）'}
+- 現地で出会った人・団体: ${i.peopleMet || '（未記入）'}
+`
+    : '';
+
+  const refsBlock = i.recentRefs && i.recentRefs.length
+    ? `\n# 部員が最近ためた参考情報\n（LINEで集めた「他団体の参考投稿」「気になったニュース」です。トーンや切り口の参考にしてください。丸写しはしないこと）\n${i.recentRefs.map((r) => `- ${r}`).join('\n')}\n`
+    : '';
+
+  const searchBlock = i.useWebSearch
+    ? `\n# 執筆前にすること\nこのテーマ（${i.theme || 'このテーマ'}）に関連する最近のニュースや、SNSで話題になっている切り口がないか、Web検索で調べてから執筆してください。関連する時事性があれば1枚目か本文に軽く触れ、なければ無理に絡めなくて構いません。\n`
+    : '';
+
+  return `${context}
+${refsBlock}${searchBlock}
+# 今回の依頼
+以下の条件で、Instagramカルーセル投稿の「Canvaに流し込む用の完成原稿」を作ってください。
+
+- 投稿テーマ: ${i.theme}
+- 内容・詳細: ${i.detail || '（特記なし。テーマから自然に展開してください）'}
+${travelBlock}- ターゲット: ${i.target}
+- 画像枚数: ${i.slides}枚
+- この投稿のゴール: ${i.goal}
+- 読者にしてほしい行動(CTA): ${i.cta || 'プロフィールのリンクをチェック / DMで気軽に質問'}
+
+# 出力フォーマット（このまま守ってください）
+## スライド構成
+各スライドについて:
+- 【n枚目】役割（表紙 / 問題提起 / 解説 / まとめ 等）
+- 見出し（15字以内・キャッチー）
+- 本文（スライドに載せる文。1枚あたり60字以内）
+- ビジュアル指示（Canvaで作る人向けの具体的なメモ。色味・イラスト・写真の指定）
+
+## キャプション
+- 冒頭1行目はフィードで切れる前提で、続きを読みたくなる一文に
+- 本文は200〜300字、改行と絵文字で読みやすく
+- 最後にCTA
+${i.account === 'travel' ? '- 清掃活動の報告だけで終わらせず、必ずその土地の魅力（文化・自然・グルメ等）に触れる一文を入れる\n' : ''}
+## ハッシュタグ
+3グループに分けて計15個前後:
+- ビッグタグ（#sdgs 等の大規模タグ）
+- ミドルタグ（#ビーチクリーン 等のテーマタグ）
+- 独自・大学タグ（#上智大学 ${i.account === 'travel' ? '#旅するgreen' : '#greensophia'} 等）
+
+# 注意
+- 1枚目は3秒で指を止めさせる。疑問形か意外な数字が有効
+- 専門用語には必ず一言の補足を
+- 誇張やエビデンスのない断定はしない`;
+}
 
 export function buildPostPrompt(i: PostPromptInput): string {
   const context = i.account === 'travel' ? CIRCLE_CONTEXT_TRAVEL : CIRCLE_CONTEXT_MAIN;
